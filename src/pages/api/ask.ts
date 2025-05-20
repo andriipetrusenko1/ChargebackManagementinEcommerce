@@ -58,10 +58,19 @@ export default async function handler(
   }
 
   try {
+    // Log environment for debugging (redact the full key in production)
+    console.log('Environment:', {
+      nodeEnv: process.env.NODE_ENV,
+      hasApiKey: !!process.env.OPENAI_API_KEY,
+      apiKeyPrefix: process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.substring(0, 10) + '...' : 'none'
+    });
+
     // Initialize OpenAI client
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
+    
+    console.log('OpenAI client initialized');
 
     // Create a system message to provide context about the application
     const systemMessage = `You are an AI assistant for a chargeback management system specializing in e-commerce.
@@ -98,6 +107,20 @@ export default async function handler(
     return res.status(200).json({ response });
   } catch (error) {
     console.error('OpenAI API error:', error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
+      // If it's an OpenAI error, it might have more details
+      if ('status' in error) {
+        console.error('Status:', (error as any).status);
+      }
+      if ('headers' in error) {
+        console.error('Headers:', (error as any).headers);
+      }
+    }
     
     // Fallback to mock responses if OpenAI API fails
     const lowerPrompt = prompt.toLowerCase();

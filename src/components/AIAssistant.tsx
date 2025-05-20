@@ -154,10 +154,16 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
       
       setError(errorMsg);
       
-      // Add error message to chat
+      // Add more detailed error message to chat
       const errorMessage: Message = {
         role: 'system',
-        content: `Sorry, I encountered an error: ${errorMsg}`,
+        content: `Sorry, I encountered an error: ${errorMsg}
+        
+If you're seeing this message repeatedly, please check:
+1. Your OpenAI API key is correctly set in .env.local (not .env.local.example)
+2. The Next.js app is running in development mode (not static export)
+3. The API key has sufficient credits and permissions
+4. Your network connection is stable`,
         timestamp: new Date()
       };
       
