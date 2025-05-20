@@ -135,10 +135,18 @@ export default function AIAssistant({ onClose }: AIAssistantProps) {
       // Get mock response based on prompt content
       const mockResponse = getMockResponse(promptText);
       
+      // For static deployments, add a note about using client-side responses
+      const isStaticDeployment = window.location.hostname !== 'localhost' && 
+                                window.location.hostname !== '127.0.0.1';
+      
+      const responseContent = isStaticDeployment 
+        ? `[Using pre-defined responses in static deployment mode]\n\n${mockResponse}`
+        : mockResponse;
+      
       // Add assistant response to chat
       const assistantMessage: Message = {
         role: 'assistant',
-        content: mockResponse,
+        content: responseContent,
         timestamp: new Date()
       };
       
